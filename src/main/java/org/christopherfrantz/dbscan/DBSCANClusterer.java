@@ -8,11 +8,11 @@ import java.util.HashSet;
  * Implementation of density-based clustering algorithm DBSCAN.
  * 
  * Publication: 
- * Ester, Martin; Kriegel, Hans-Peter; Sander, Jörg; Xu, Xiaowei (1996). 
+ * Ester, Martin; Kriegel, Hans-Peter; Sander, JÃ¶rg; Xu, Xiaowei (1996).
  * Simoudis, Evangelos; Han, Jiawei; Fayyad, Usama M., eds. 
  * A density-based algorithm for discovering clusters in large spatial 
  * databases with noise. Proceedings of the Second International Conference 
- * on Knowledge Discovery and Data Mining (KDD-96). AAAI Press. pp. 226–231
+ * on Knowledge Discovery and Data Mining (KDD-96). AAAI Press. pp. 226-231
  * 
  * Usage:
  * - Identify type of input values.

@@ -11,11 +11,11 @@ class DBSCANClustering<V>
  *
  * @param inputValues Input values to be clustered
  * @param minNumElements Minimum number of elements to constitute cluster
- * @param maxDistance Maximum distance of elements to consider clustered
+ * @param epsilon Maximum distance of elements to consider clustered
  * @param metric Metric implementation to determine distance
  * @throws DBSCANClusteringException
  */
-(inputValues: Collection<V>, minNumElements: Int, maxDistance: Double, metric: (V, V) -> Double) {
+(inputValues: Collection<V>, minNumElements: Int, epsilon: Double, metric: (V, V) -> Double) {
 
   /** maximum distance of values to be considered as cluster  */
   private var epsilon = 1.0
@@ -38,12 +38,13 @@ class DBSCANClustering<V>
     }
 
     if (inputValues.size < 2) {
-      throw RuntimeException("DBSCAN: Less than two input values cannot be clustered. Number of input values: " + inputValues!!.size)
+      throw RuntimeException(
+          "DBSCAN: Less than two input values cannot be clustered. Number of input values: ${inputValues.size}")
     }
     this.minimumNumberOfClusterMembers = minNumElements
-    this.epsilon = maxDistance
+    this.epsilon = epsilon
 
-    if (epsilon < 0) {
+    if (this.epsilon < 0) {
       throw RuntimeException("DBSCAN: Maximum distance of input values cannot be negative. Current value: $epsilon")
     }
     if (minimumNumberOfClusterMembers < 2) {
@@ -56,15 +57,14 @@ class DBSCANClustering<V>
   /**
    * Determines the neighbours of a given input value.
    *
-   * @param inputValue Input value for which neighbours are to be determined
+   * @param verifyValue Input value for which neighbours are to be determined
    * @return list of neighbours
    * @throws DBSCANClusteringException
    */
-  private fun getNeighbours(inputValue: V): ArrayList<V> {
+  private fun getNeighbours(verifyValue: V): ArrayList<V> {
     val neighbours = ArrayList<V>()
-    for (i in inputValues.indices) {
-      val candidate = inputValues[i]
-      if (metric(inputValue, candidate) <= epsilon) {
+    for (candidate in inputValues) {
+      if (metric(verifyValue, candidate) <= epsilon) {
         neighbours.add(candidate)
       }
     }
@@ -81,8 +81,7 @@ class DBSCANClustering<V>
    */
   private fun mergeRightToLeftCollection(neighbours1: ArrayList<V>,
                                          neighbours2: ArrayList<V>): ArrayList<V> {
-    for (i in neighbours2.indices) {
-      val tempPt = neighbours2[i]
+    for (tempPt in neighbours2) {
       if (!neighbours1.contains(tempPt)) {
         neighbours1.add(tempPt)
       }
@@ -101,14 +100,12 @@ class DBSCANClustering<V>
     val resultList = ArrayList<ArrayList<V>>()
     visitedPoints.clear()
 
-    var neighbours: ArrayList<V>
     var index = 0
-
     while (inputValues.size > index) {
       val p = inputValues[index]
       if (!visitedPoints.contains(p)) {
         visitedPoints.add(p)
-        neighbours = getNeighbours(p)
+        var neighbours = getNeighbours(p)
 
         if (neighbours.size >= minimumNumberOfClusterMembers) {
           var ind = 0
